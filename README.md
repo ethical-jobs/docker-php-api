@@ -15,6 +15,7 @@ All images contain the following features:
 
 ## XDebug
 The XDebug module is included in all base images, but is not loaded by default as an extension.
+
 When using the image for remote debugging, or local development be sure to lazily load in the module, or adjust your `php.ini` to include the extension.
 
 ```bash
