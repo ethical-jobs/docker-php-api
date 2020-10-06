@@ -19,5 +19,4 @@ When using the image for remote debugging, or local development be sure to lazil
 
 ```bash
 php -d zend_extension=xdebug ... 
-``
-`
+```
