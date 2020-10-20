@@ -2,12 +2,15 @@ FROM php:7.4-fpm-alpine AS php
 
 LABEL maintainer="Ethical Jobs <development@ethicaljobs.com.au>"
 
-FROM php AS system_environment
+# Remove html directory php base image creates
+RUN rm -rf /var/www/html
+WORKDIR /var/www
 
-RUN apk add --no-cache oniguruma-dev $PHPIZE_DEPS \
-    && pecl install xdebug && pecl clear-cache \
+RUN apk add --no-cache --virtual .ej-deps oniguruma-dev freetype-dev libzip-dev \
+        libjpeg-turbo-dev libpng-dev zlib $PHPIZE_DEPS \
+    && pecl channel-update pecl.php.net && pecl install xdebug && pecl clear-cache \
     && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && echo $NPROC \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j${NPROC} \
         mysqli \
         pdo_mysql \
@@ -15,11 +18,10 @@ RUN apk add --no-cache oniguruma-dev $PHPIZE_DEPS \
         pcntl \
         bcmath \
         exif \
-        mbstring \
+        gd \
     && docker-php-source delete \
-    && apk del --no-network oniguruma-dev $PHPIZE_DEPS --purge
-
-FROM php AS composer
+    && apk del --no-network .ej-deps \
+    && apk add --no-cache freetype libjpeg-turbo libpng
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
