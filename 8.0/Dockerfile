@@ -1,12 +1,12 @@
-FROM php:8.0.0-fpm-alpine AS xdebug
+FROM php:8.0.1-fpm-alpine AS xdebug
 
-RUN wget https://xdebug.org/files/xdebug-3.0.1.tgz -q -S -P /tmp \
+RUN wget https://xdebug.org/files/xdebug-3.0.2.tgz -q -S -P /tmp \
     && apk add --no-cache --virtual .deps $PHPIZE_DEPS \
-    && pear install /tmp/xdebug-3.0.1.tgz \
-    && rm /tmp/xdebug-3.0.1.tgz \
+    && pear install /tmp/xdebug-3.0.2.tgz \
+    && rm /tmp/xdebug-3.0.2.tgz \
     && apk del --no-network .deps
 
-FROM php:8.0.0-fpm-alpine AS php
+FROM php:8.0.1-fpm-alpine AS php
 
 LABEL maintainer="Ethical Jobs <development@ethicaljobs.com.au>"
 
@@ -34,4 +34,3 @@ RUN apk add --no-cache --virtual .deps zlib-dev libpng-dev freetype-dev libjpeg-
     && chmod 755 /var/www
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
